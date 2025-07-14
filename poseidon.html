@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -1040,18 +1040,19 @@
     };
 
     // ===== 背景音樂控制 =====
-    let bgMusic = null;
     let isMusicPlaying = false;
 
     function initBackgroundMusic() {
-      bgMusic = new Audio('sound/午後放鬆時光（純音樂）.mp3');
-      bgMusic.loop = true;
-      bgMusic.volume = 0.3;
-      
-      // 從localStorage讀取音樂狀態
-      const musicState = localStorage.getItem('bgMusicState');
-      if (musicState === 'playing') {
-        playBackgroundMusic();
+      const bgMusic = document.getElementById('backgroundMusic');
+      if (bgMusic) {
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+        
+        // 從localStorage讀取音樂狀態
+        const musicState = localStorage.getItem('bgMusicState');
+        if (musicState === 'playing') {
+          playBackgroundMusic();
+        }
       }
     }
 
@@ -1064,6 +1065,7 @@
     }
 
     function playBackgroundMusic() {
+      const bgMusic = document.getElementById('backgroundMusic');
       if (bgMusic) {
         bgMusic.play().then(() => {
           isMusicPlaying = true;
@@ -1077,6 +1079,7 @@
     }
 
     function pauseBackgroundMusic() {
+      const bgMusic = document.getElementById('backgroundMusic');
       if (bgMusic) {
         bgMusic.pause();
         isMusicPlaying = false;
@@ -1793,4 +1796,3 @@
   </script>
 </body>
 </html>
-
