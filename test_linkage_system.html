@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkageSystem 測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .test-section {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 LinkageSystem 載入測試</h1>
+        
+        <div id="status"></div>
+        
+        <div class="test-section">
+            <h2>基本載入測試：</h2>
+            <button onclick="testBasicLoading()">測試基本載入</button>
+            <div id="basicTest"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>卡片系統測試：</h2>
+            <button onclick="testCardSystem()">測試卡片系統</button>
+            <button onclick="addTestCards()">添加測試卡片</button>
+            <button onclick="clearTestCards()">清除測試卡片</button>
+            <div id="cardTest"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>星星系統測試：</h2>
+            <button onclick="testStarSystem()">測試星星系統</button>
+            <button onclick="addStars(10)">添加 10 顆星星</button>
+            <button onclick="addStars(50)">添加 50 顆星星</button>
+            <div id="starTest"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>玩家系統測試：</h2>
+            <button onclick="testPlayerSystem()">測試玩家系統</button>
+            <button onclick="setTestPlayer()">設定測試玩家</button>
+            <div id="playerTest"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>詳細調試資訊：</h2>
+            <button onclick="showDebugInfo()">顯示調試資訊</button>
+            <div id="debugInfo"></div>
+        </div>
+    </div>
+
+    <!-- 載入必要的腳本 -->
+    <script src="js/userData.js"></script>
+    
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function updateTestResult(elementId, content) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = content;
+        }
+        
+        function testBasicLoading() {
+            let result = '<h3>基本載入測試結果：</h3>';
+            
+            // 檢查 userDataModuleLoaded
+            if (window.userDataModuleLoaded) {
+                result += '<p>✅ userDataModuleLoaded 已設定</p>';
+            } else {
+                result += '<p>❌ userDataModuleLoaded 未設定</p>';
+            }
+            
+            // 檢查 LinkageSystem
+            if (typeof window.LinkageSystem !== 'undefined') {
+                result += '<p>✅ window.LinkageSystem 已載入</p>';
+                
+                // 檢查各個子系統
+                const subsystems = ['stars', 'player', 'cards', 'music', 'progress', 'notifications'];
+                subsystems.forEach(subsystem => {
+                    if (window.LinkageSystem[subsystem]) {
+                        result += `<p>✅ ${subsystem} 子系統可用</p>`;
+                    } else {
+                        result += `<p>❌ ${subsystem} 子系統不可用</p>`;
+                    }
+                });
+            } else {
+                result += '<p>❌ window.LinkageSystem 未載入</p>';
+            }
+            
+            // 檢查全域變數
+            if (typeof LinkageSystem !== 'undefined') {
+                result += '<p>✅ 全域 LinkageSystem 變數可用</p>';
+            } else {
+                result += '<p>❌ 全域 LinkageSystem 變數不可用</p>';
+            }
+            
+            updateTestResult('basicTest', result);
+            updateStatus('基本載入測試完成', 'success');
+        }
+        
+        function testCardSystem() {
+            let result = '<h3>卡片系統測試結果：</h3>';
+            
+            if (typeof window.LinkageSystem === 'undefined' || !window.LinkageSystem.cards) {
+                result += '<p>❌ 卡片系統不可用</p>';
+                updateTestResult('cardTest', result);
+                return;
+            }
+            
+            const cards = window.LinkageSystem.cards;
+            
+            // 測試 getOwnedCards
+            try {
+                const ownedCards = cards.getOwnedCards();
+                result += `<p>✅ getOwnedCards() 成功，返回 ${Object.keys(ownedCards).length} 張卡片</p>`;
+            } catch (e) {
+                result += `<p>❌ getOwnedCards() 失敗：${e.message}</p>`;
+            }
+            
+            // 測試 getShards
+            try {
+                const shards = cards.getShards();
+                result += `<p>✅ getShards() 成功，返回 ${Object.keys(shards).length} 種碎片</p>`;
+            } catch (e) {
+                result += `<p>❌ getShards() 失敗：${e.message}</p>`;
+            }
+            
+            // 測試 addCard
+            try {
+                cards.addCard('test_card');
+                result += '<p>✅ addCard() 成功</p>';
+            } catch (e) {
+                result += `<p>❌ addCard() 失敗：${e.message}</p>`;
+            }
+            
+            // 測試 isCardOwned
+            try {
+                const isOwned = cards.isCardOwned('test_card');
+                result += `<p>✅ isCardOwned() 成功，test_card 擁有狀態：${isOwned}</p>`;
+            } catch (e) {
+                result += `<p>❌ isCardOwned() 失敗：${e.message}</p>`;
+            }
+            
+            updateTestResult('cardTest', result);
+            updateStatus('卡片系統測試完成', 'success');
+        }
+        
+        function addTestCards() {
+            if (typeof window.LinkageSystem === 'undefined' || !window.LinkageSystem.cards) {
+                updateStatus('❌ 卡片系統不可用', 'error');
+                return;
+            }
+            
+            const testCards = ['apple', 'banana', 'orange', 'grape', 'strawberry'];
+            testCards.forEach(card => {
+                window.LinkageSystem.cards.addCard(card);
+            });
+            
+            updateStatus(`✅ 已添加 ${testCards.length} 張測試卡片`, 'success');
+            testCardSystem();
+        }
+        
+        function clearTestCards() {
+            if (typeof window.LinkageSystem === 'undefined' || !window.LinkageSystem.cards) {
+                updateStatus('❌ 卡片系統不可用', 'error');
+                return;
+            }
+            
+            const testCards = ['apple', 'banana', 'orange', 'grape', 'strawberry', 'test_card'];
+            const ownedCards = window.LinkageSystem.cards.getOwnedCards();
+            
+            testCards.forEach(card => {
+                delete ownedCards[card];
+            });
+            
+            window.LinkageSystem.cards.setOwnedCards(ownedCards);
+            
+            updateStatus(`✅ 已清除測試卡片`, 'success');
+            testCardSystem();
+        }
+        
+        function testStarSystem() {
+            let result = '<h3>星星系統測試結果：</h3>';
+            
+            if (typeof window.LinkageSystem === 'undefined' || !window.LinkageSystem.stars) {
+                result += '<p>❌ 星星系統不可用</p>';
+                updateTestResult('starTest', result);
+                return;
+            }
+            
+            const stars = window.LinkageSystem.stars;
+            
+            // 測試 get
+            try {
+                const currentStars = stars.get();
+                result += `<p>✅ get() 成功，當前星星：${currentStars}</p>`;
+            } catch (e) {
+                result += `<p>❌ get() 失敗：${e.message}</p>`;
+            }
+            
+            // 測試 add
+            try {
+                const before = stars.get();
+                stars.add(5);
+                const after = stars.get();
+                result += `<p>✅ add() 成功，${before} + 5 = ${after}</p>`;
+            } catch (e) {
+                result += `<p>❌ add() 失敗：${e.message}</p>`;
+            }
+            
+            updateTestResult('starTest', result);
+            updateStatus('星星系統測試完成', 'success');
+        }
+        
+        function addStars(amount) {
+            if (typeof window.LinkageSystem === 'undefined' || !window.LinkageSystem.stars) {
+                updateStatus('❌ 星星系統不可用', 'error');
+                return;
+            }
+            
+            window.LinkageSystem.stars.add(amount);
+            updateStatus(`✅ 已添加 ${amount} 顆星星`, 'success');
+            testStarSystem();
+        }
+        
+        function testPlayerSystem() {
+            let result = '<h3>玩家系統測試結果：</h3>';
+            
+            if (typeof window.LinkageSystem === 'undefined' || !window.LinkageSystem.player) {
+                result += '<p>❌ 玩家系統不可用</p>';
+                updateTestResult('playerTest', result);
+                return;
+            }
+            
+            const player = window.LinkageSystem.player;
+            
+            // 測試 getName
+            try {
+                const name = player.getName();
+                result += `<p>✅ getName() 成功，玩家名稱：${name}</p>`;
+            } catch (e) {
+                result += `<p>❌ getName() 失敗：${e.message}</p>`;
+            }
+            
+            // 測試 getAvatar
+            try {
+                const avatar = player.getAvatar();
+                result += `<p>✅ getAvatar() 成功，頭像：${avatar}</p>`;
+            } catch (e) {
+                result += `<p>❌ getAvatar() 失敗：${e.message}</p>`;
+            }
+            
+            updateTestResult('playerTest', result);
+            updateStatus('玩家系統測試完成', 'success');
+        }
+        
+        function setTestPlayer() {
+            if (typeof window.LinkageSystem === 'undefined' || !window.LinkageSystem.player) {
+                updateStatus('❌ 玩家系統不可用', 'error');
+                return;
+            }
+            
+            window.LinkageSystem.player.setName('測試玩家');
+            window.LinkageSystem.player.setAvatar('img/avatars/avatar_TL.png');
+            
+            updateStatus('✅ 已設定測試玩家資料', 'success');
+            testPlayerSystem();
+        }
+        
+        function showDebugInfo() {
+            let result = '<h3>詳細調試資訊：</h3>';
+            
+            // 檢查所有相關的全域變數
+            const globalVars = [
+                'userDataModuleLoaded',
+                'LinkageSystem',
+                'window.LinkageSystem',
+                'window.userDataModuleLoaded'
+            ];
+            
+            globalVars.forEach(varName => {
+                try {
+                    const value = eval(varName);
+                    if (value !== undefined) {
+                        result += `<p>✅ ${varName} = ${typeof value === 'object' ? 'Object' : value}</p>`;
+                    } else {
+                        result += `<p>❌ ${varName} = undefined</p>`;
+                    }
+                } catch (e) {
+                    result += `<p>❌ ${varName} 錯誤：${e.message}</p>`;
+                }
+            });
+            
+            // 檢查 localStorage
+            result += '<h4>localStorage 檢查：</h4>';
+            const localStorageKeys = ['ownedCards', 'cardShards', 'totalStars', 'playerName', 'selectedAvatar'];
+            localStorageKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    result += `<p>✅ ${key} = ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}</p>`;
+                } else {
+                    result += `<p>❌ ${key} = null</p>`;
+                }
+            });
+            
+            updateTestResult('debugInfo', result);
+            updateStatus('調試資訊顯示完成', 'success');
+        }
+        
+        // 頁面載入完成後執行
+        window.addEventListener('load', function() {
+            console.log('頁面載入完成，開始測試...');
+            
+            setTimeout(() => {
+                testBasicLoading();
+                updateStatus('頁面載入完成，請點擊按鈕進行測試', 'info');
+            }, 500);
+        });
+    </script>
+</body>
+</html> 

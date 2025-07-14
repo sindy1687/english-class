@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>MP4 影片卡片測試</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="card-style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0a1428 0%, #1a2a4a 100%);
+      color: #fff;
+      padding: 20px;
+    }
+    
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .test-header h1 {
+      color: #00ffff;
+      text-shadow: 0 0 20px #00ffff;
+      margin-bottom: 10px;
+    }
+    
+    .test-info {
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid #00ffff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .test-card {
+      background: rgba(10, 20, 40, 0.9);
+      border: 2px solid #00ffff;
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .test-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+    }
+    
+    .test-card h3 {
+      color: #00ffff;
+      margin-bottom: 10px;
+    }
+    
+    .test-card p {
+      color: #ccc;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    
+    .status.success {
+      background: rgba(0, 255, 0, 0.2);
+      border: 1px solid #00ff00;
+      color: #00ff00;
+    }
+    
+    .status.error {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #ff0000;
+      color: #ff0000;
+    }
+    
+    .status.info {
+      background: rgba(0, 255, 255, 0.2);
+      border: 1px solid #00ffff;
+      color: #00ffff;
+    }
+    
+    .back-btn {
+      background: linear-gradient(90deg, #00ffff 0%, #a259ff 100%);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .back-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🎬 MP4 影片卡片功能測試</h1>
+      <a href="cards.html" class="back-btn">← 返回卡片倉庫</a>
+    </div>
+    
+    <div class="test-info">
+      <h3>📋 測試說明</h3>
+      <p>這個頁面用來測試 MP4 影片卡片功能是否正常運作。請檢查以下項目：</p>
+      <ul>
+        <li>✅ MP4 影片是否能正確載入和播放</li>
+        <li>✅ 影片控制按鈕是否正常運作</li>
+        <li>✅ 未解鎖卡片是否顯示縮圖而非影片</li>
+        <li>✅ Modal 檢視是否正常顯示影片</li>
+      </ul>
+    </div>
+    
+    <div id="testResults">
+      <div class="status info">🔄 正在載入測試...</div>
+    </div>
+    
+    <div class="test-grid">
+      <div class="test-card">
+        <h3>🎯 功能測試</h3>
+        <p>測試 MP4 影片卡片的各種功能，包括播放、暫停、循環等。</p>
+      </div>
+      
+      <div class="test-card">
+        <h3>📱 相容性測試</h3>
+        <p>測試在不同瀏覽器和裝置上的相容性。</p>
+      </div>
+      
+      <div class="test-card">
+        <h3>⚡ 效能測試</h3>
+        <p>測試影片載入速度和記憶體使用情況。</p>
+      </div>
+      
+      <div class="test-card">
+        <h3>🎨 視覺效果測試</h3>
+        <p>測試影片的視覺效果和動畫。</p>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="back-btn" onclick="runTests()">🧪 執行測試</button>
+      <button class="back-btn" onclick="location.href='cards.html'">📁 查看卡片倉庫</button>
+    </div>
+  </div>
+
+  <script src="js/userData.js"></script>
+  <script src="js/cards.js"></script>
+  <script>
+    // 測試函數
+    function runTests() {
+      const resultsDiv = document.getElementById('testResults');
+      resultsDiv.innerHTML = '';
+      
+      // 測試 1：檢查 MP4 影片卡片是否存在
+      const mp4Cards = window.allCards.filter(card => 
+        card.video && (card.video.endsWith('.mp4') || card.video_url?.endsWith('.mp4'))
+      );
+      
+      if (mp4Cards.length > 0) {
+        addTestResult('✅ 找到 MP4 影片卡片', 'success', `找到 ${mp4Cards.length} 張 MP4 影片卡片`);
+      } else {
+        addTestResult('❌ 未找到 MP4 影片卡片', 'error', '請在 cards.js 中添加 MP4 影片卡片');
+      }
+      
+      // 測試 2：檢查影片檔案路徑
+      mp4Cards.forEach(card => {
+        const videoPath = card.video || card.video_url;
+        addTestResult(`🔍 檢查卡片：${card.word}`, 'info', `影片路徑：${videoPath}`);
+      });
+      
+      // 測試 3：檢查瀏覽器支援
+      const video = document.createElement('video');
+      if (video.canPlayType && video.canPlayType('video/mp4').replace(/no/, '')) {
+        addTestResult('✅ 瀏覽器支援 MP4 格式', 'success');
+      } else {
+        addTestResult('❌ 瀏覽器不支援 MP4 格式', 'error');
+      }
+      
+      // 測試 4：檢查自動播放支援
+      if (typeof document.createElement('video').play === 'function') {
+        addTestResult('✅ 支援影片自動播放', 'success');
+      } else {
+        addTestResult('❌ 不支援影片自動播放', 'error');
+      }
+    }
+    
+    function addTestResult(title, type, details = '') {
+      const resultsDiv = document.getElementById('testResults');
+      const resultDiv = document.createElement('div');
+      resultDiv.className = `status ${type}`;
+      resultDiv.innerHTML = `
+        <strong>${title}</strong>
+        ${details ? `<br><small>${details}</small>` : ''}
+      `;
+      resultsDiv.appendChild(resultDiv);
+    }
+    
+    // 頁面載入時自動執行測試
+    window.addEventListener('load', () => {
+      setTimeout(runTests, 1000);
+    });
+  </script>
+</body>
+</html> 

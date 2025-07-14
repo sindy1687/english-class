@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水果卡片測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+        }
+        .card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .card h3 {
+            margin: 10px 0;
+            color: #333;
+        }
+        .card p {
+            color: #666;
+            font-size: 14px;
+        }
+        .rarity {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .rarity.普通 { background: #90EE90; color: #006400; }
+        .rarity.稀有 { background: #87CEEB; color: #000080; }
+        .rarity.超稀有 { background: #DDA0DD; color: #4B0082; }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍎 水果卡片測試頁面</h1>
+        
+        <div id="status"></div>
+        
+        <h2>已解鎖的水果卡片：</h2>
+        <div id="unlockedCards"></div>
+        
+        <h2>所有水果卡片：</h2>
+        <div id="allFruitCards"></div>
+        
+        <h2>調試資訊：</h2>
+        <div id="debugInfo"></div>
+    </div>
+
+    <!-- 載入必要的腳本 -->
+    <script src="js/cards.js"></script>
+    <script src="js/userData.js"></script>
+    
+    <script>
+        console.log('=== 水果卡片測試開始 ===');
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function updateDebugInfo() {
+            const debugDiv = document.getElementById('debugInfo');
+            let debugHTML = '<h3>調試資訊：</h3>';
+            
+            // 檢查 allCards 是否載入
+            debugHTML += `<p><strong>allCards 載入狀態：</strong> ${typeof window.allCards !== 'undefined' ? '✅ 已載入' : '❌ 未載入'}</p>`;
+            
+            if (typeof window.allCards !== 'undefined') {
+                debugHTML += `<p><strong>allCards 總數：</strong> ${window.allCards.length}</p>`;
+                
+                // 找出水果卡片
+                const fruitCards = window.allCards.filter(card => card.category === '水果');
+                debugHTML += `<p><strong>水果卡片數量：</strong> ${fruitCards.length}</p>`;
+                
+                if (fruitCards.length > 0) {
+                    debugHTML += '<p><strong>水果卡片列表：</strong></p><ul>';
+                    fruitCards.forEach(card => {
+                        debugHTML += `<li>${card.word} (${card.zh}) - ${card.rarity}</li>`;
+                    });
+                    debugHTML += '</ul>';
+                }
+            }
+            
+            // 檢查 LinkageSystem
+            debugHTML += `<p><strong>LinkageSystem 載入狀態：</strong> ${typeof window.LinkageSystem !== 'undefined' ? '✅ 已載入' : '❌ 未載入'}</p>`;
+            
+            if (typeof window.LinkageSystem !== 'undefined') {
+                const unlockedCards = window.LinkageSystem.getUnlockedCards();
+                debugHTML += `<p><strong>已解鎖卡片數量：</strong> ${unlockedCards.length}</p>`;
+                
+                if (unlockedCards.length > 0) {
+                    debugHTML += '<p><strong>已解鎖卡片列表：</strong></p><ul>';
+                    unlockedCards.forEach(cardName => {
+                        debugHTML += `<li>${cardName}</li>`;
+                    });
+                    debugHTML += '</ul>';
+                }
+            }
+            
+            debugDiv.innerHTML = debugHTML;
+        }
+        
+        function renderUnlockedCards() {
+            const unlockedDiv = document.getElementById('unlockedCards');
+            
+            if (typeof window.LinkageSystem === 'undefined') {
+                unlockedDiv.innerHTML = '<p>❌ LinkageSystem 未載入</p>';
+                return;
+            }
+            
+            const unlockedCards = window.LinkageSystem.getUnlockedCards();
+            const fruitCards = ['apple', 'banana', 'orange', 'grape', 'strawberry'];
+            
+            let html = '';
+            let foundCount = 0;
+            
+            fruitCards.forEach(cardName => {
+                const isUnlocked = unlockedCards.includes(cardName);
+                const cardData = window.allCards?.find(card => card.word === cardName);
+                
+                if (isUnlocked) {
+                    foundCount++;
+                    if (cardData) {
+                        html += `
+                            <div class="card">
+                                <img src="${cardData.image}" alt="${cardData.zh}" onerror="this.src='https://via.placeholder.com/150x150?text=圖片載入失敗'">
+                                <h3>${cardData.word}</h3>
+                                <p>${cardData.zh}</p>
+                                <div class="rarity ${cardData.rarity}">${cardData.rarity}</div>
+                                <p>${cardData.description}</p>
+                                <p style="color: green; font-weight: bold;">✅ 已解鎖</p>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="card">
+                                <img src="https://via.placeholder.com/150x150?text=❓" alt="找不到卡片">
+                                <h3>${cardName}</h3>
+                                <p>❓ 找不到卡片資料</p>
+                                <p style="color: green; font-weight: bold;">✅ 已解鎖</p>
+                            </div>
+                        `;
+                    }
+                }
+            });
+            
+            if (foundCount === 0) {
+                html = '<p>❌ 沒有找到已解鎖的水果卡片</p>';
+            }
+            
+            unlockedDiv.innerHTML = html;
+        }
+        
+        function renderAllFruitCards() {
+            const allFruitDiv = document.getElementById('allFruitCards');
+            
+            if (typeof window.allCards === 'undefined') {
+                allFruitDiv.innerHTML = '<p>❌ allCards 未載入</p>';
+                return;
+            }
+            
+            const fruitCards = window.allCards.filter(card => card.category === '水果');
+            
+            if (fruitCards.length === 0) {
+                allFruitDiv.innerHTML = '<p>❌ 沒有找到水果卡片</p>';
+                return;
+            }
+            
+            let html = '';
+            fruitCards.forEach(card => {
+                html += `
+                    <div class="card">
+                        <img src="${card.image}" alt="${card.zh}" onerror="this.src='https://via.placeholder.com/150x150?text=圖片載入失敗'">
+                        <h3>${card.word}</h3>
+                        <p>${card.zh}</p>
+                        <div class="rarity ${card.rarity}">${card.rarity}</div>
+                        <p>${card.description}</p>
+                    </div>
+                `;
+            });
+            
+            allFruitDiv.innerHTML = html;
+        }
+        
+        // 等待頁面載入完成後執行
+        window.addEventListener('load', function() {
+            console.log('頁面載入完成，開始測試...');
+            
+            // 等待一小段時間確保所有腳本都載入完成
+            setTimeout(() => {
+                updateStatus('正在檢查卡片資料...', 'info');
+                
+                if (typeof window.allCards !== 'undefined') {
+                    const fruitCards = window.allCards.filter(card => card.category === '水果');
+                    updateStatus(`✅ 成功載入 ${fruitCards.length} 張水果卡片`, 'success');
+                } else {
+                    updateStatus('❌ allCards 未載入', 'error');
+                }
+                
+                renderUnlockedCards();
+                renderAllFruitCards();
+                updateDebugInfo();
+                
+                console.log('=== 水果卡片測試完成 ===');
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

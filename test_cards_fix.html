@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>卡片載入測試</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .card {
+      border: 2px solid #00ffff;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px;
+      display: inline-block;
+      width: 200px;
+      background: rgba(0, 255, 255, 0.1);
+    }
+    .card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .success { background: #4CAF50; }
+    .error { background: #f44336; }
+    .info { background: #2196F3; }
+  </style>
+</head>
+<body>
+  <h1>🎴 卡片載入測試</h1>
+  
+  <div id="status"></div>
+  <div id="cardCount"></div>
+  <div id="cardGrid"></div>
+
+  <script src="js/cards.js"></script>
+  <script>
+    function addStatus(message, type = 'info') {
+      const statusDiv = document.getElementById('status');
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.textContent = message;
+      statusDiv.appendChild(div);
+      console.log(message);
+    }
+
+    function waitForAllCards() {
+      console.log('檢查 allCards 狀態:', {
+        hasAllCards: typeof window.allCards !== 'undefined',
+        allCardsLength: window.allCards ? window.allCards.length : 0,
+        allCardsType: typeof window.allCards
+      });
+      
+      if (window.allCards && window.allCards.length > 0) {
+        addStatus(`✅ allCards 載入成功，長度: ${window.allCards.length}`, 'success');
+        renderTestCards();
+      } else {
+        addStatus('⏳ 等待 allCards 載入...', 'info');
+        setTimeout(waitForAllCards, 200);
+      }
+    }
+
+    function renderTestCards() {
+      const cardGrid = document.getElementById('cardGrid');
+      const cardCount = document.getElementById('cardCount');
+      
+      cardCount.innerHTML = `<h2>總共 ${window.allCards.length} 張卡片</h2>`;
+      
+      // 顯示前 10 張卡片作為測試
+      const testCards = window.allCards.slice(0, 10);
+      
+      testCards.forEach(card => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        cardDiv.innerHTML = `
+          <img src="${card.image}" alt="${card.word}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='">
+          <h3>${card.word}</h3>
+          <p>${card.zh}</p>
+          <p>稀有度: ${card.rarity}</p>
+          <p>類別: ${card.category}</p>
+        `;
+        cardGrid.appendChild(cardDiv);
+      });
+      
+      addStatus(`✅ 已顯示 ${testCards.length} 張測試卡片`, 'success');
+    }
+
+    // 確保在 DOM 載入完成後再開始等待 allCards
+    document.addEventListener('DOMContentLoaded', function() {
+      addStatus('🚀 頁面載入完成，開始檢查卡片資料...', 'info');
+      
+      // 延遲一點時間確保 cards.js 已經載入
+      setTimeout(() => {
+        waitForAllCards();
+      }, 100);
+    });
+  </script>
+</body>
+</html> 

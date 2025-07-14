@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>音樂連動測試</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      background: #333;
+    }
+    .success { background: #28a745; }
+    .error { background: #dc3545; }
+    .info { background: #17a2b8; }
+  </style>
+</head>
+<body>
+  <h1>🎵 音樂連動系統測試</h1>
+  
+  <div class="test-section">
+    <h3>系統狀態檢查</h3>
+    <div id="systemStatus" class="status info">檢查中...</div>
+    <button onclick="checkSystemStatus()">重新檢查</button>
+  </div>
+  
+  <div class="test-section">
+    <h3>音樂控制</h3>
+    <button onclick="testPlay()">播放音樂</button>
+    <button onclick="testPause()">暫停音樂</button>
+    <button onclick="testToggle()">切換音樂</button>
+    <div id="musicStatus" class="status info">等待測試...</div>
+  </div>
+  
+  <div class="test-section">
+    <h3>LinkageSystem 測試</h3>
+    <button onclick="testLinkageSystem()">測試 LinkageSystem</button>
+    <div id="linkageStatus" class="status info">等待測試...</div>
+  </div>
+  
+  <div class="test-section">
+    <h3>SoundSystem 測試</h3>
+    <button onclick="testSoundSystem()">測試 SoundSystem</button>
+    <div id="soundStatus" class="status info">等待測試...</div>
+  </div>
+  
+  <div class="test-section">
+    <h3>localStorage 測試</h3>
+    <button onclick="testLocalStorage()">測試 localStorage</button>
+    <div id="storageStatus" class="status info">等待測試...</div>
+  </div>
+  
+  <div class="test-section">
+    <h3>診斷工具</h3>
+    <button onclick="runFullDiagnostic()">完整診斷</button>
+    <button onclick="clearAllData()">清除所有數據</button>
+    <div id="diagnosticResult" class="status info">等待診斷...</div>
+  </div>
+
+  <!-- 音樂元素 -->
+  <audio id="backgroundMusic" loop>
+    <source src="sound/午後放鬆時光（純音樂）.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- 載入必要的腳本 -->
+  <script src="js/userData.js"></script>
+  <script src="js/sound.js"></script>
+  
+  <script>
+    // 測試函數
+    function checkSystemStatus() {
+      const status = document.getElementById('systemStatus');
+      let html = '<h4>系統狀態報告：</h4>';
+      
+      // 檢查 LinkageSystem
+      if (typeof LinkageSystem !== 'undefined') {
+        html += '<p>✅ LinkageSystem 已載入</p>';
+        if (LinkageSystem.music) {
+          html += '<p>✅ LinkageSystem.music 可用</p>';
+        } else {
+          html += '<p>❌ LinkageSystem.music 不可用</p>';
+        }
+      } else {
+        html += '<p>❌ LinkageSystem 未載入</p>';
+      }
+      
+      // 檢查 SoundSystem
+      if (typeof SoundSystem !== 'undefined') {
+        html += '<p>✅ SoundSystem 已載入</p>';
+        if (SoundSystem.bgm) {
+          html += '<p>✅ SoundSystem.bgm 可用</p>';
+        } else {
+          html += '<p>❌ SoundSystem.bgm 不可用</p>';
+        }
+      } else {
+        html += '<p>❌ SoundSystem 未載入</p>';
+      }
+      
+      // 檢查音樂元素
+      const music = document.getElementById('backgroundMusic');
+      if (music) {
+        html += '<p>✅ 背景音樂元素存在</p>';
+        html += `<p>音樂檔案: ${music.src}</p>`;
+        html += `<p>音量: ${music.volume}</p>`;
+        html += `<p>循環: ${music.loop}</p>`;
+        html += `<p>暫停狀態: ${music.paused}</p>`;
+      } else {
+        html += '<p>❌ 背景音樂元素不存在</p>';
+      }
+      
+      status.innerHTML = html;
+      status.className = 'status success';
+    }
+    
+    function testPlay() {
+      const status = document.getElementById('musicStatus');
+      const music = document.getElementById('backgroundMusic');
+      
+      try {
+        music.play().then(() => {
+          status.innerHTML = '✅ 音樂播放成功';
+          status.className = 'status success';
+        }).catch(err => {
+          status.innerHTML = `❌ 音樂播放失敗: ${err.message}`;
+          status.className = 'status error';
+        });
+      } catch (err) {
+        status.innerHTML = `❌ 播放函數錯誤: ${err.message}`;
+        status.className = 'status error';
+      }
+    }
+    
+    function testPause() {
+      const status = document.getElementById('musicStatus');
+      const music = document.getElementById('backgroundMusic');
+      
+      try {
+        music.pause();
+        status.innerHTML = '✅ 音樂暫停成功';
+        status.className = 'status success';
+      } catch (err) {
+        status.innerHTML = `❌ 暫停函數錯誤: ${err.message}`;
+        status.className = 'status error';
+      }
+    }
+    
+    function testToggle() {
+      const status = document.getElementById('musicStatus');
+      const music = document.getElementById('backgroundMusic');
+      
+      if (music.paused) {
+        testPlay();
+      } else {
+        testPause();
+      }
+    }
+    
+    function testLinkageSystem() {
+      const status = document.getElementById('linkageStatus');
+      
+      if (typeof LinkageSystem !== 'undefined' && LinkageSystem.music) {
+        try {
+          const isPlaying = LinkageSystem.music.isPlaying();
+          const volume = LinkageSystem.music.getVolume();
+          
+          status.innerHTML = `
+            ✅ LinkageSystem 測試成功<br>
+            播放狀態: ${isPlaying}<br>
+            音量: ${volume}
+          `;
+          status.className = 'status success';
+        } catch (err) {
+          status.innerHTML = `❌ LinkageSystem 測試失敗: ${err.message}`;
+          status.className = 'status error';
+        }
+      } else {
+        status.innerHTML = '❌ LinkageSystem 不可用';
+        status.className = 'status error';
+      }
+    }
+    
+    function testSoundSystem() {
+      const status = document.getElementById('soundStatus');
+      
+      if (typeof SoundSystem !== 'undefined' && SoundSystem.bgm) {
+        try {
+          const isPlaying = SoundSystem.bgm.getPlayingState();
+          const volume = SoundSystem.bgm.getVolume();
+          
+          status.innerHTML = `
+            ✅ SoundSystem 測試成功<br>
+            播放狀態: ${isPlaying}<br>
+            音量: ${volume}
+          `;
+          status.className = 'status success';
+        } catch (err) {
+          status.innerHTML = `❌ SoundSystem 測試失敗: ${err.message}`;
+          status.className = 'status error';
+        }
+      } else {
+        status.innerHTML = '❌ SoundSystem 不可用';
+        status.className = 'status error';
+      }
+    }
+    
+    function testLocalStorage() {
+      const status = document.getElementById('storageStatus');
+      
+      try {
+        const musicState = localStorage.getItem('bgMusicState');
+        const musicVolume = localStorage.getItem('musicVolume');
+        
+        status.innerHTML = `
+          ✅ localStorage 測試成功<br>
+          音樂狀態: ${musicState || '未設定'}<br>
+          音樂音量: ${musicVolume || '未設定'}
+        `;
+        status.className = 'status success';
+      } catch (err) {
+        status.innerHTML = `❌ localStorage 測試失敗: ${err.message}`;
+        status.className = 'status error';
+      }
+    }
+    
+    function runFullDiagnostic() {
+      const result = document.getElementById('diagnosticResult');
+      let html = '<h4>完整診斷報告：</h4>';
+      
+      // 檢查所有系統
+      checkSystemStatus();
+      testLinkageSystem();
+      testSoundSystem();
+      testLocalStorage();
+      
+      // 檢查音樂檔案
+      const music = document.getElementById('backgroundMusic');
+      if (music) {
+        music.addEventListener('canplaythrough', () => {
+          html += '<p>✅ 音樂檔案可以播放</p>';
+          result.innerHTML = html;
+          result.className = 'status success';
+        });
+        
+        music.addEventListener('error', (e) => {
+          html += '<p>❌ 音樂檔案載入失敗</p>';
+          result.innerHTML = html;
+          result.className = 'status error';
+        });
+        
+        // 嘗試載入音樂
+        music.load();
+      }
+      
+      result.innerHTML = html;
+      result.className = 'status info';
+    }
+    
+    function clearAllData() {
+      try {
+        localStorage.removeItem('bgMusicState');
+        localStorage.removeItem('musicVolume');
+        document.getElementById('diagnosticResult').innerHTML = '✅ 所有音樂相關數據已清除';
+        document.getElementById('diagnosticResult').className = 'status success';
+      } catch (err) {
+        document.getElementById('diagnosticResult').innerHTML = `❌ 清除數據失敗: ${err.message}`;
+        document.getElementById('diagnosticResult').className = 'status error';
+      }
+    }
+    
+    // 頁面載入時自動檢查
+    window.addEventListener('load', () => {
+      setTimeout(checkSystemStatus, 1000);
+    });
+  </script>
+</body>
+</html> 

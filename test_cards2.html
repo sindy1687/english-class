@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cards2.js 測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-result {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #00ff00;
+        }
+        .error {
+            border-left-color: #ff0000;
+            background: #ffe6e6;
+        }
+        .card-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .card-item {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .card-title {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .card-category {
+            font-size: 12px;
+            color: #666;
+        }
+        .card-rarity {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .rarity-普通 { background: #ccc; color: white; }
+        .rarity-稀有 { background: #00ffff; color: black; }
+        .rarity-超稀有 { background: #ff00ff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🎴 Cards2.js 載入測試</h1>
+    
+    <div id="testResults">
+        <div class="test-result">正在測試...</div>
+    </div>
+    
+    <div id="cardPreview" class="card-preview"></div>
+
+    <!-- 載入 cards2.js -->
+    <script src="js/cards2.js"></script>
+    <script>
+        function testCards2() {
+            const results = document.getElementById('testResults');
+            const cardPreview = document.getElementById('cardPreview');
+            
+            try {
+                // 測試 1: 檢查 allCards 是否存在
+                if (!window.allCards) {
+                    throw new Error('allCards 未載入');
+                }
+                
+                // 測試 2: 檢查卡片數量
+                const cardCount = window.allCards.length;
+                if (cardCount === 0) {
+                    throw new Error('卡片數量為 0');
+                }
+                
+                // 測試 3: 檢查卡片結構
+                const firstCard = window.allCards[0];
+                const requiredFields = ['word', 'zh', 'image', 'rarity', 'category', 'description'];
+                for (const field of requiredFields) {
+                    if (!firstCard[field]) {
+                        throw new Error(`卡片缺少必要欄位: ${field}`);
+                    }
+                }
+                
+                // 測試 4: 統計稀有度
+                const rarityStats = {};
+                window.allCards.forEach(card => {
+                    rarityStats[card.rarity] = (rarityStats[card.rarity] || 0) + 1;
+                });
+                
+                // 顯示測試結果
+                results.innerHTML = `
+                    <div class="test-result">
+                        ✅ Cards2.js 載入成功！<br>
+                        總卡片數: ${cardCount}<br>
+                        稀有度統計:<br>
+                        ${Object.entries(rarityStats).map(([rarity, count]) => 
+                            `- ${rarity}: ${count} 張`
+                        ).join('<br>')}
+                    </div>
+                `;
+                
+                // 顯示前 12 張卡片預覽
+                const previewCards = window.allCards.slice(0, 12);
+                cardPreview.innerHTML = previewCards.map(card => `
+                    <div class="card-item">
+                        <img src="${card.image}" alt="${card.word}" class="card-image" 
+                             onerror="this.src='https://via.placeholder.com/200x120/666/fff?text=圖片載入失敗'">
+                        <div class="card-title">${card.word}</div>
+                        <div class="card-category">${card.category}</div>
+                        <span class="card-rarity rarity-${card.rarity}">${card.rarity}</span>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="test-result error">
+                        ❌ 測試失敗: ${error.message}
+                    </div>
+                `;
+                console.error('測試失敗:', error);
+            }
+        }
+        
+        // 等待頁面載入完成後執行測試
+        window.addEventListener('load', () => {
+            setTimeout(testCards2, 1000);
+        });
+    </script>
+</body>
+</html> 

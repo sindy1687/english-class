@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡片資料持久化測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #4CAF50; color: white; }
+        .error { background: #f44336; color: white; }
+        .warning { background: #ff9800; color: white; }
+        .info { background: #2196F3; color: white; }
+        button {
+            background: #00ffff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00cccc;
+        }
+        .data-display {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log {
+            background: #000;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 卡片資料持久化測試</h1>
+    
+    <div class="test-section">
+        <h2>📊 系統狀態檢查</h2>
+        <div id="systemStatus"></div>
+        <button onclick="checkSystemStatus()">🔄 重新檢查系統狀態</button>
+    </div>
+
+    <div class="test-section">
+        <h2>💾 資料操作測試</h2>
+        <button onclick="testAddCard()">➕ 新增測試卡片</button>
+        <button onclick="testAddShard()">💎 新增測試碎片</button>
+        <button onclick="testRemoveShard()">♻️ 移除測試碎片</button>
+        <button onclick="testUnlockCard()">🔓 解鎖測試卡片</button>
+        <button onclick="clearTestData()">🗑️ 清除測試資料</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 當前資料狀態</h2>
+        <button onclick="refreshDataDisplay()">🔄 重新整理資料</button>
+        <div id="dataDisplay"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 除錯日誌</h2>
+        <button onclick="clearLog()">🗑️ 清除日誌</button>
+        <div id="debugLog" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔄 頁面重新載入測試</h2>
+        <button onclick="reloadPage()">🔄 重新載入頁面</button>
+        <p>點擊按鈕重新載入頁面，檢查資料是否正確保存。</p>
+    </div>
+
+    <script>
+        // 載入必要的腳本
+        const scripts = [
+            'js/userData.js',
+            'js/cardStorage.js',
+            'js/cardUtils.js'
+        ];
+
+        let loadedScripts = 0;
+        scripts.forEach(src => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => {
+                loadedScripts++;
+                if (loadedScripts === scripts.length) {
+                    initializeTest();
+                }
+            };
+            script.onerror = () => {
+                log(`❌ 載入失敗: ${src}`, 'error');
+                loadedScripts++;
+                if (loadedScripts === scripts.length) {
+                    initializeTest();
+                }
+            };
+            document.head.appendChild(script);
+        });
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            logDiv.textContent += logEntry;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('debugLog').textContent = '';
+        }
+
+        function initializeTest() {
+            log('🚀 測試系統初始化完成');
+            checkSystemStatus();
+            refreshDataDisplay();
+        }
+
+        function checkSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            let status = '';
+
+            // 檢查 LinkageSystem
+            if (typeof LinkageSystem !== 'undefined') {
+                status += '<div class="status success">✅ LinkageSystem 已載入</div>';
+                if (LinkageSystem.cards) {
+                    status += '<div class="status success">✅ LinkageSystem.cards 可用</div>';
+                } else {
+                    status += '<div class="status error">❌ LinkageSystem.cards 不可用</div>';
+                }
+            } else {
+                status += '<div class="status error">❌ LinkageSystem 未載入</div>';
+            }
+
+            // 檢查 CardStorage
+            if (typeof CardStorage !== 'undefined') {
+                status += '<div class="status success">✅ CardStorage 已載入</div>';
+            } else {
+                status += '<div class="status error">❌ CardStorage 未載入</div>';
+            }
+
+            // 檢查 CardSystem
+            if (typeof CardSystem !== 'undefined') {
+                status += '<div class="status success">✅ CardSystem 已載入</div>';
+            } else {
+                status += '<div class="status error">❌ CardSystem 未載入</div>';
+            }
+
+            // 檢查 localStorage
+            try {
+                const ownedCards = localStorage.getItem('ownedCards');
+                const cardShards = localStorage.getItem('cardShards');
+                status += `<div class="status info">📊 localStorage 狀態: ownedCards=${ownedCards ? '已存在' : '不存在'}, cardShards=${cardShards ? '已存在' : '不存在'}</div>`;
+            } catch (error) {
+                status += '<div class="status error">❌ localStorage 存取失敗</div>';
+            }
+
+            statusDiv.innerHTML = status;
+        }
+
+        function refreshDataDisplay() {
+            const displayDiv = document.getElementById('dataDisplay');
+            let display = '';
+
+            try {
+                // 使用 LinkageSystem
+                if (typeof LinkageSystem !== 'undefined' && LinkageSystem.cards) {
+                    const ownedCards = LinkageSystem.cards.getOwnedCards();
+                    const shards = LinkageSystem.cards.getShards();
+                    
+                    display += '=== LinkageSystem 資料 ===\n';
+                    display += `已擁有卡片: ${Object.keys(ownedCards).length} 張\n`;
+                    display += `碎片種類: ${Object.keys(shards).length} 種\n`;
+                    display += `總碎片數: ${Object.values(shards).reduce((sum, count) => sum + count, 0)} 個\n\n`;
+                }
+
+                // 使用 CardStorage
+                if (typeof CardStorage !== 'undefined') {
+                    const ownedCards = CardStorage.getOwnedCards();
+                    const shards = CardStorage.getShards();
+                    
+                    display += '=== CardStorage 資料 ===\n';
+                    display += `已擁有卡片: ${Object.keys(ownedCards).length} 張\n`;
+                    display += `碎片種類: ${Object.keys(shards).length} 種\n`;
+                    display += `總碎片數: ${Object.values(shards).reduce((sum, count) => sum + count, 0)} 個\n\n`;
+                }
+
+                // 直接讀取 localStorage
+                const ownedCardsStr = localStorage.getItem('ownedCards');
+                const cardShardsStr = localStorage.getItem('cardShards');
+                
+                display += '=== localStorage 原始資料 ===\n';
+                display += `ownedCards: ${ownedCardsStr || 'null'}\n`;
+                display += `cardShards: ${cardShardsStr || 'null'}\n`;
+
+            } catch (error) {
+                display += `❌ 讀取資料時發生錯誤: ${error.message}\n`;
+            }
+
+            displayDiv.textContent = display;
+        }
+
+        function testAddCard() {
+            const testCard = 'test_card_' + Date.now();
+            log(`🔄 測試新增卡片: ${testCard}`);
+
+            // 使用 LinkageSystem
+            if (typeof LinkageSystem !== 'undefined' && LinkageSystem.cards) {
+                LinkageSystem.cards.addCard(testCard);
+                log(`✅ LinkageSystem 新增卡片: ${testCard}`);
+            }
+
+            // 使用 CardStorage
+            if (typeof CardStorage !== 'undefined') {
+                CardStorage.addCard(testCard);
+                log(`✅ CardStorage 新增卡片: ${testCard}`);
+            }
+
+            // 使用 CardSystem
+            if (typeof CardSystem !== 'undefined') {
+                CardSystem.unlockCard(testCard);
+                log(`✅ CardSystem 解鎖卡片: ${testCard}`);
+            }
+
+            setTimeout(refreshDataDisplay, 100);
+        }
+
+        function testAddShard() {
+            const testCard = 'test_shard_' + Date.now();
+            log(`🔄 測試新增碎片: ${testCard}`);
+
+            // 使用 LinkageSystem
+            if (typeof LinkageSystem !== 'undefined' && LinkageSystem.cards) {
+                LinkageSystem.cards.addShard(testCard, 3);
+                log(`✅ LinkageSystem 新增碎片: ${testCard} +3`);
+            }
+
+            // 使用 CardStorage
+            if (typeof CardStorage !== 'undefined') {
+                CardStorage.addShard(testCard, 3);
+                log(`✅ CardStorage 新增碎片: ${testCard} +3`);
+            }
+
+            // 使用 CardSystem
+            if (typeof CardSystem !== 'undefined') {
+                CardSystem.addShards(testCard, 3);
+                log(`✅ CardSystem 新增碎片: ${testCard} +3`);
+            }
+
+            setTimeout(refreshDataDisplay, 100);
+        }
+
+        function testRemoveShard() {
+            const testCard = 'test_shard_remove';
+            log(`🔄 測試移除碎片: ${testCard}`);
+
+            // 先添加一些碎片
+            if (typeof LinkageSystem !== 'undefined' && LinkageSystem.cards) {
+                LinkageSystem.cards.addShard(testCard, 5);
+                log(`➕ 先添加 5 個碎片`);
+                
+                // 然後移除 2 個
+                const shards = LinkageSystem.cards.getShards();
+                shards[testCard] = Math.max(0, (shards[testCard] || 0) - 2);
+                LinkageSystem.cards.setShards(shards);
+                log(`✅ LinkageSystem 移除碎片: ${testCard} -2`);
+            }
+
+            setTimeout(refreshDataDisplay, 100);
+        }
+
+        function testUnlockCard() {
+            const testCard = 'test_unlock_' + Date.now();
+            log(`🔄 測試解鎖卡片: ${testCard}`);
+
+            // 使用 CardSystem
+            if (typeof CardSystem !== 'undefined') {
+                CardSystem.unlockCard(testCard);
+                log(`✅ CardSystem 解鎖卡片: ${testCard}`);
+            }
+
+            setTimeout(refreshDataDisplay, 100);
+        }
+
+        function clearTestData() {
+            log('🔄 清除測試資料');
+            
+            if (confirm('確定要清除所有測試資料嗎？')) {
+                // 清除 localStorage 中的測試資料
+                const ownedCards = JSON.parse(localStorage.getItem('ownedCards') || '{}');
+                const cardShards = JSON.parse(localStorage.getItem('cardShards') || '{}');
+                
+                // 移除所有以 'test_' 開頭的資料
+                Object.keys(ownedCards).forEach(key => {
+                    if (key.startsWith('test_')) {
+                        delete ownedCards[key];
+                    }
+                });
+                
+                Object.keys(cardShards).forEach(key => {
+                    if (key.startsWith('test_')) {
+                        delete cardShards[key];
+                    }
+                });
+                
+                localStorage.setItem('ownedCards', JSON.stringify(ownedCards));
+                localStorage.setItem('cardShards', JSON.stringify(cardShards));
+                
+                log('✅ 測試資料已清除');
+                setTimeout(refreshDataDisplay, 100);
+            }
+        }
+
+        function reloadPage() {
+            log('🔄 重新載入頁面...');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+
+        // 監聽 localStorage 變化
+        window.addEventListener('storage', (e) => {
+            log(`🔄 localStorage 變化: ${e.key} = ${e.newValue}`, 'info');
+        });
+
+        // 定期檢查資料一致性
+        setInterval(() => {
+            if (typeof LinkageSystem !== 'undefined' && typeof CardStorage !== 'undefined') {
+                const linkageCards = LinkageSystem.cards.getOwnedCards();
+                const storageCards = CardStorage.getOwnedCards();
+                const linkageShards = LinkageSystem.cards.getShards();
+                const storageShards = CardStorage.getShards();
+                
+                const cardsMatch = JSON.stringify(linkageCards) === JSON.stringify(storageCards);
+                const shardsMatch = JSON.stringify(linkageShards) === JSON.stringify(storageShards);
+                
+                if (!cardsMatch || !shardsMatch) {
+                    log('⚠️ 資料不一致檢測到！', 'warning');
+                    log(`卡片資料匹配: ${cardsMatch}`, 'warning');
+                    log(`碎片資料匹配: ${shardsMatch}`, 'warning');
+                }
+            }
+        }, 5000);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>簡單卡片測試</title>
+  <style>
+    body { font-family: Arial; margin: 20px; background: #1a1a1a; color: #fff; }
+    .card { border: 2px solid #00ffff; padding: 10px; margin: 10px; display: inline-block; width: 150px; }
+    .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+    .success { background: #4CAF50; }
+    .error { background: #f44336; }
+    .info { background: #2196F3; }
+  </style>
+</head>
+<body>
+  <h1>🎴 簡單卡片測試</h1>
+  <div id="status"></div>
+  <div id="result"></div>
+
+  <script>
+    function log(message, type = 'info') {
+      const statusDiv = document.getElementById('status');
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.textContent = message;
+      statusDiv.appendChild(div);
+      console.log(message);
+    }
+
+    // 檢查 cards.js 是否載入
+    function checkCardsJs() {
+      log('🔍 檢查 cards.js 載入狀態...', 'info');
+      
+      if (typeof window.allCards !== 'undefined') {
+        log(`✅ allCards 已載入，共 ${window.allCards.length} 張卡片`, 'success');
+        
+        // 顯示前 5 張卡片
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '<h2>前 5 張卡片：</h2>';
+        
+        window.allCards.slice(0, 5).forEach((card, index) => {
+          const cardDiv = document.createElement('div');
+          cardDiv.className = 'card';
+          cardDiv.innerHTML = `
+            <h3>${index + 1}. ${card.word}</h3>
+            <p>${card.zh}</p>
+            <p>稀有度: ${card.rarity}</p>
+          `;
+          resultDiv.appendChild(cardDiv);
+        });
+        
+        log('✅ 測試完成！', 'success');
+      } else {
+        log('❌ allCards 未載入', 'error');
+        
+        // 嘗試動態載入
+        log('🔄 嘗試動態載入 cards.js...', 'info');
+        const script = document.createElement('script');
+        script.src = 'js/cards.js';
+        script.onload = function() {
+          log('✅ 動態載入成功，重新檢查...', 'success');
+          setTimeout(checkCardsJs, 100);
+        };
+        script.onerror = function() {
+          log('❌ 動態載入失敗', 'error');
+        };
+        document.head.appendChild(script);
+      }
+    }
+
+    // 頁面載入完成後檢查
+    document.addEventListener('DOMContentLoaded', function() {
+      log('🚀 頁面載入完成', 'info');
+      setTimeout(checkCardsJs, 100);
+    });
+  </script>
+  
+      <script src="js/cards.js"></script>
+</body>
+</html> 

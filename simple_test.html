@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡化測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-result {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #00ff00;
+        }
+        .error {
+            border-left-color: #ff0000;
+            background: #ffe6e6;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎴 簡化測試</h1>
+    
+    <div id="testResults">
+        <div class="test-result">正在測試...</div>
+    </div>
+
+    <!-- 載入腳本 -->
+    <script src="js/cardVersionManager.js"></script>
+    <script>
+        function testCardVersionManager() {
+            const results = document.getElementById('testResults');
+            
+            try {
+                // 測試 1: 檢查是否存在
+                if (!window.CardVersionManager) {
+                    throw new Error('CardVersionManager 未載入');
+                }
+                
+                // 測試 2: 檢查方法
+                if (typeof CardVersionManager.getCurrentVersion !== 'function') {
+                    throw new Error('getCurrentVersion 方法不存在');
+                }
+                
+                // 測試 3: 獲取版本
+                const version = CardVersionManager.getCurrentVersion();
+                console.log('當前版本:', version);
+                
+                // 測試 4: 獲取設備資訊
+                const deviceInfo = CardVersionManager.getDeviceInfo();
+                console.log('設備資訊:', deviceInfo);
+                
+                results.innerHTML = `
+                    <div class="test-result">
+                        ✅ 測試成功！<br>
+                        當前版本: ${version}<br>
+                        設備類型: ${deviceInfo.isMobile ? '手機' : deviceInfo.isTablet ? '平板' : '電腦'}<br>
+                        推薦版本: ${deviceInfo.recommendedVersion}
+                    </div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="test-result error">
+                        ❌ 測試失敗: ${error.message}
+                    </div>
+                `;
+                console.error('測試失敗:', error);
+            }
+        }
+        
+        // 等待頁面載入完成後執行測試
+        window.addEventListener('load', () => {
+            setTimeout(testCardVersionManager, 500);
+        });
+    </script>
+</body>
+</html> 
