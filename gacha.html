@@ -259,8 +259,8 @@
     }
     #cardGrid > * { position: relative; z-index: 1; }
     .card {
-      width: 160px;
-      height: 240px;
+      width: 170px;
+      height: 260px;
       position: relative;
       background: rgba(10, 20, 40, 0.85);
       border-radius: 16px;
@@ -279,6 +279,7 @@
       box-shadow: 0 0 16px #00ffff55, 0 0 32px #a259ff33;
       border: 2.5px solid #00ffff;
       backdrop-filter: blur(8px);
+      font-size: 1.1rem;
     }
     .card:hover {
       transform: translateY(-10px) scale(1.06) rotate(-2deg);
@@ -294,14 +295,15 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }
-    .card img {
-      width: 100%;
-      height: 50%;
+    .card img, .card video, .wish-card-style .card-media {
+      width: 95%;
+      height: 150px;
+      max-height: 150px;
+      display: block;
+      margin: 0 auto 8px auto;
       border-radius: 10px;
-      filter: drop-shadow(0 0 12px #00ffffcc);
       object-fit: cover;
       background: #000;
-      margin-bottom: 8px;
     }
     .stars {
       margin-top: 4px;
@@ -312,26 +314,29 @@
       text-shadow: 0 0 8px #fff, 0 0 16px #00ffff;
     }
     .card .label {
-      margin-top: 6px;
-      font-size: 0.9rem;
-      color: #00ffff;
-      white-space: normal;
-      overflow: visible;
-      text-overflow: unset;
-      width: 100%;
-      text-shadow: 0 0 8px #00ffff, 0 0 16px #a259ff;
-      line-height: 1.2;
-      word-wrap: break-word;
-      hyphens: auto;
-      min-height: 2.4em;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      margin-top: 6px;
+      margin-bottom: 0;
+      padding: 0;
+      line-height: 1.1;
+    }
+    .chinese-text {
+      font-size: 1.08em;
+      font-weight: bold;
+      margin-bottom: 2px;
+      letter-spacing: 1px;
+    }
+    .english-text {
+      font-size: 0.98em;
+      color: #ffd700cc;
+      margin-top: 0;
+      letter-spacing: 0.5px;
     }
     .card .category-tag {
       margin-top: 4px;
-      font-size: 0.85rem;
+      font-size: 0.85em;
       color: #ffd700;
       text-shadow: 0 0 6px #fff, 0 0 12px #00ffff;
     }
@@ -1119,9 +1124,10 @@
       }
       
       .card {
-        width: 140px;
-        height: 210px;
+        width: 130px;
+        height: 200px;
         padding: 8px;
+        font-size: 1rem;
       }
       
       header {
@@ -1179,9 +1185,10 @@
       }
       
       .card {
-        width: 130px;
-        height: 195px;
+        width: 110px;
+        height: 160px;
         padding: 6px;
+        font-size: 0.95rem;
       }
       
       .card img {
@@ -1232,8 +1239,9 @@
       
       .card {
         width: 110px;
-        height: 165px;
+        height: 160px;
         padding: 5px;
+        font-size: 0.95rem;
       }
       
       .card img {
@@ -1352,104 +1360,151 @@
       }
     }
 
-    // 新增 wish-card-outer, wish-card-inner, wish-card-style, wish-bonus-block, wish-bonus-icon, wish-bonus-text 樣式
-    (function() {
-      const wishCardStyle = document.createElement('style');
-      wishCardStyle.textContent = `
-        .wish-card-outer {
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          width: 100%;
-          margin: 0 auto;
-          padding: 12px 0 8px 0;
-        }
-        .wish-card-inner {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 18px;
-          max-width: 260px;
-          width: 100%;
-        }
-        .wish-card-style {
-          box-shadow: 0 0 24px #00ffff33, 0 0 40px #a259ff22 inset;
-          border-radius: 16px;
-          background: rgba(10, 20, 40, 0.92);
-          padding: 14px 12px 22px 12px;
-          margin-bottom: 0;
-          width: 230px;
-          max-width: 100%;
-          min-width: 180px;
-          height: 480px;
-          min-height: 420px;
-          transition: box-shadow 0.3s;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-        }
-        .wish-card-style video.card-media {
-          width: 100%;
-          height: 50%;
-          object-fit: cover;
-          border-radius: 10px;
-          filter: drop-shadow(0 0 12px #00ffffcc);
-          background: #000;
-          margin-bottom: 8px;
-        }
-        .wish-card-style .label {
-          font-size: 0.92rem;
-          min-height: 2.1em;
-        }
-        .wish-card-style .chinese-text {
-          font-size: 0.92rem;
-        }
-        .wish-card-style .english-text {
-          font-size: 0.82rem;
-        }
-        .wish-card-style .category-tag {
-          font-size: 0.82rem;
-          margin-top: 2px;
-        }
-        .wish-card-style .stars {
-          font-size: 0.9rem;
-          margin-top: 2px;
-        }
-        .wish-bonus-block {
-          margin-top: 12px;
-          background: linear-gradient(90deg, #ffd70022 0%, #00ffff22 100%);
-          border-radius: 12px;
-          padding: 12px 20px;
-          font-size: 1.05rem;
-          color: #ffd700;
-          font-weight: bold;
-          box-shadow: 0 0 12px #ffd70033;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          justify-content: center;
-          letter-spacing: 1px;
-        }
-        .wish-bonus-icon {
-          font-size: 1.2em;
-          margin-right: 4px;
-        }
-        .wish-bonus-text {
-          color: #ffd700;
-          font-weight: bold;
-          text-shadow: 0 0 8px #ffd70088;
-        }
-        @media (max-width: 600px) {
-          .wish-card-inner { max-width: 98vw; }
-          .wish-card-style { width: 98vw; min-width: 0; height: 400px; min-height: 320px; }
-          .wish-card-style .label { font-size: 0.85rem; }
-          .wish-card-style .chinese-text { font-size: 0.85rem; }
-          .wish-card-style .english-text { font-size: 0.75rem; }
-          .wish-card-style .category-tag { font-size: 0.65rem; }
-        }
-      `;
-      document.head.appendChild(wishCardStyle);
-    })();
+    /* 新增 wish-card-outer, wish-card-inner, wish-card-style, wish-bonus-block, wish-bonus-icon, wish-bonus-text 樣式 */
+    .wish-card-outer {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      margin: 0 auto;
+      padding: 12px 0 8px 0;
+    }
+    .wish-card-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      max-width: 260px;
+      width: 100%;
+    }
+    .wish-card-style {
+      width: 240px;
+      min-width: 160px;
+      max-width: 90vw;
+      height: 320px;
+      min-height: 160px;
+      padding: 16px 10px 16px 10px;
+      border: 2px solid #ffd700;
+      background: rgba(255,255,255,0.92);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      font-size: 0.85em; /* 新增這行或調小原本的字體 */
+    }
+    .wish-card-style:hover {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      transform: scale(1.03);
+      border-color: #ffcc33;
+    }
+    .wish-card-style .card-media {
+      width: 90%;
+      height: 70%;
+      max-height: none;
+      min-height: 70%;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 8px;
+      background: #eee;
+      box-shadow: 0 2px 8px #ffd70022;
+    }
+    .wish-card-style .label {
+      margin-top: 4px;
+      margin-bottom: 0;
+      padding: 0;
+      line-height: 1.08;
+      color: #111 !important;
+      font-weight: 600;
+      font-size: 1.08em; /* 或 0.85rem 視覺上再微調 */
+    }
+    .wish-card-style .chinese-text {
+      font-size: 1.12em;
+      margin-bottom: 2px;
+      color: #0055aa !important;
+      text-shadow: 0 1px 4px #fff, 0 0 2px #0055aa44;
+    }
+    .wish-card-style .english-text {
+      font-size: 1em;
+      color: #333 !important;
+      text-shadow: 0 1px 4px #fff, 0 0 2px #3333;
+    }
+    .wish-card-style .category-tag {
+      margin-top: 6px;
+      font-size: 0.95em; /* 或 0.65rem 視覺上再微調 */
+      color: #b8860b !important;
+      text-shadow: none;
+      font-weight: bold;
+    }
+    .wish-card-style .stars {
+      margin-top: 8px;
+      font-size: 1.1em; /* 或 0.75rem 視覺上再微調 */
+      color: #ffd700 !important;
+      text-shadow: 0 0 8px #fff, 0 0 12px #ffd700;
+      font-weight: bold;
+    }
+    .wish-card-style .rank-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 1.05rem;
+      background: #fffbe6;
+      color: #ffd700;
+      border: 1.5px solid #ffd700;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px #ffd70022;
+      z-index: 2;
+    }
+    .wish-bonus-block {
+      margin-top: 12px;
+      background: linear-gradient(90deg, #ffd70022 0%, #00ffff22 100%);
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 1.05rem;
+      color: #ffd700;
+      font-weight: bold;
+      box-shadow: 0 0 12px #ffd70033;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      letter-spacing: 1px;
+    }
+    .wish-bonus-icon {
+      font-size: 1.2em;
+      margin-right: 4px;
+    }
+    .wish-bonus-text {
+      color: #ffd700;
+      font-weight: bold;
+      text-shadow: 0 0 8px #ffd70088;
+    }
+    @media (max-width: 600px) {
+      .wish-card-inner { max-width: 98vw; }
+      .wish-card-style { width: 98vw; min-width: 0; height: 180px; min-height: 100px; font-size: 1rem; }
+      .wish-card-style .label { font-size: 0.85rem; }
+      .wish-card-style .category-tag { font-size: 0.65rem; }
+      .wish-card-style .stars { font-size: 0.75rem; }
+    }
+    .unlock-status-icon {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      font-size: 1.3em;
+      opacity: 0.85;
+      z-index: 2;
+      pointer-events: none;
+      text-shadow: 0 0 6px #000, 0 0 2px #fff;
+    }
+    .card.unlocked .unlock-status-icon { color: #00ff99; }
+    .card.locked .unlock-status-icon { color: #ff6666; }
   </style>
 </head>
 <body>
@@ -1466,12 +1521,23 @@
   <!-- 新增：許願池選擇區域 -->
   <div class="wish-section">
     <h3>🌟 星辰祈願</h3>
-    <div class="wish-controls">
-      <select id="wishPool" class="wish-select">
-        <option value="">請選擇許願 SSR 卡片</option>
-      </select>
-      <button class="btn wish-btn" onclick="setWishCard()">✨ 設定許願</button>
-      <button class="btn wish-btn" onclick="clearWishCard()">🗑️ 清除許願</button>
+    <div class="wish-controls" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <input id="wishSearchGlobal" class="wish-select" style="margin-bottom:8px;max-width:400px;" placeholder="搜尋卡片/類別/名稱...">
+      <div style="display:flex;gap:18px;flex-wrap:wrap;justify-content:center;align-items:flex-start;width:100%;">
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:180px;">
+          <div style="font-weight:bold;color:#ffd700;margin-bottom:4px;">SSR 許願</div>
+          <select id="wishPoolSSR" class="wish-select"></select>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:180px;">
+          <div style="font-weight:bold;color:#a259ff;margin-bottom:4px;">R 許願</div>
+          <select id="wishPoolR" class="wish-select"></select>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;min-width:180px;">
+          <div style="font-weight:bold;color:#00ffff;margin-bottom:4px;">A 許願</div>
+          <select id="wishPoolA" class="wish-select"></select>
+        </div>
+        <button id="setWishBtn" class="wish-btn" style="height:48px;align-self:center;">設定許願</button>
+      </div>
     </div>
     <div id="currentWish" class="current-wish"></div>
   </div>
@@ -1479,6 +1545,8 @@
   <!-- 移除分頁按鈕 -->
   <main>
     <h2>點擊按鈕開始抽卡！</h2>
+    <!-- 新增：分類分頁按鈕區塊 -->
+    <div id="categoryTabs" style="margin-bottom: 18px;"></div>
     <div style="margin-bottom: 32px;">
       <button class="btn" onclick="drawCard()">🔮 抽一張（需 20 星）</button>
       <button class="btn" onclick="drawTen()">🌟 十連抽（需 200 星）</button>
@@ -1656,54 +1724,29 @@
       savePityCounters();
     }
 
-    // 新增：初始化許願池選項
-    function initializeWishPool() {
-      const wishSelect = document.getElementById('wishPool');
-      wishSelect.innerHTML = '<option value="">請選擇許願 SSR 卡片</option>';
-      
-      if (!Array.isArray(allCards) || allCards.length === 0) return;
-      
-      // 只顯示 SSR 卡片
-      const ssrCards = allCards.filter(card => card.rarity === '超稀有');
-      
-      if (ssrCards.length > 0) {
-        ssrCards.forEach(card => {
-          const option = document.createElement('option');
-          option.value = card.word;
-          option.textContent = `${card.zh} (${card.word}) - ${card.category}`;
-          wishSelect.appendChild(option);
-        });
-      } else {
-        // 如果沒有 SSR 卡片，顯示提示
-        const option = document.createElement('option');
-        option.value = "";
-        option.textContent = "目前沒有 SSR 卡片";
-        option.disabled = true;
-        wishSelect.appendChild(option);
-      }
+    // 在 initializeWishPool 之前補上 getRarityEmoji 函數
+    function getRarityEmoji(rarity) {
+      if (rarity === '超稀有') return '🌟';
+      if (rarity === '稀有') return '🔷';
+      if (rarity === '普通') return '⚪';
+      return '';
     }
+
+    // 新增：初始化許願池選項（可選所有稀有度）
+    // === 刪除 initializeWishPool 函數定義及所有呼叫 ===
+    // （請直接移除 function initializeWishPool(...) { ... } 及所有 initializeWishPool(...) 呼叫）
+    // ... existing code ...
 
     // 新增：設定許願卡片
     function setWishCard() {
-      const wishSelect = document.getElementById('wishPool');
-      const selectedValue = wishSelect.value;
-      
-      if (!selectedValue) {
-        LinkageSystem.notifications.show('請先選擇要許願的 SSR 卡片！', 'warning');
+      const card = getCurrentWishCard();
+      if (!card) {
+        LinkageSystem.notifications.show('請先選擇要許願的卡片！', 'warning');
         return;
       }
-      
-      const selectedCard = allCards.find(card => card.word === selectedValue);
-      if (!selectedCard) {
-        LinkageSystem.notifications.show('找不到選定的 SSR 卡片！', 'error');
-        return;
-      }
-      
-      currentWishCard = selectedCard;
-      localStorage.setItem('currentWishCard', JSON.stringify(selectedCard));
-      updateWishDisplay();
-      
-      LinkageSystem.notifications.show(`✨ 已設定 SSR 許願：${selectedCard.zh}！抽中機率提升 2%！`, 'success');
+      currentWishCard = card;
+      localStorage.setItem('currentWishCard', JSON.stringify(card));
+      LinkageSystem.notifications.show(`✨ 已設定許願：${card.zh}！`, 'success');
     }
 
     // 新增：清除許願卡片
@@ -1717,71 +1760,50 @@
 
     // 新增：更新許願顯示
     function updateWishDisplay() {
+      const card = getCurrentWishCard();
       const currentWishDiv = document.getElementById('currentWish');
-      
-      if (!currentWishCard) {
-        currentWishDiv.innerHTML = '目前沒有設定 SSR 許願';
+      if (!currentWishDiv) return;
+      if (!card) {
+        currentWishDiv.innerHTML = '目前沒有設定許願';
         return;
       }
-      
-      // 取得卡片資料
-      const card = currentWishCard;
-      // 稀有度 class
-      const rarityClass = card.rarity === '普通' ? 'common'
-                           : card.rarity === '稀有' ? 'rare' : 'epic';
-      // 稀有度徽章
-      let rarityText = card.rarity === '普通' ? 'A' : card.rarity === '稀有' ? 'R' : 'SSR';
-      let rarityIconHtml = `<div class="rarity-icon ${rarityClass}">${rarityText}</div>`;
-      // 星星
+      const rarityClass = card.rarity === '普通' ? 'common' : card.rarity === '稀有' ? 'rare' : 'epic';
+      const isImageMP4 = card.image && card.image.endsWith('.mp4');
+      let cardMedia = isImageMP4
+        ? `<video class="card-media" autoplay loop muted playsinline style="width: 100%; height: 50%; object-fit: cover; border-radius: 10px;">
+            <source src="${card.image}" type="video/mp4">您的瀏覽器不支援影片播放</video>`
+        : `<img class="card-media" src="${card.image}" alt="${card.word}">`;
       let starIcons = card.rarity === '普通' ? '★' : card.rarity === '稀有' ? '★★' : '★★★';
-      // 已擁有標記
-      const isUnlocked = LinkageSystem.cards.isCardOwned(card.word);
-      let ownedStampHtml = isUnlocked ? '<div class="owned-stamp">✔ 已擁有</div>' : '';
-              // 檢查是否為 MP4 影片
-        const isImageMP4 = card.image && card.image.endsWith('.mp4');
-        
-        // 卡片內容
-        let cardContent = `
-          <div class="wish-card-outer">
-            <div class="wish-card-inner">
-              <div class="card ${rarityClass}${isUnlocked ? ' unlocked' : ' locked'} wish-card-style">
-                ${isImageMP4 ? 
-                  `<video class="card-media" autoplay loop muted playsinline style="width: 100%; height: 50%; object-fit: cover; border-radius: 10px;">
-                    <source src="${card.image}" type="video/mp4">
-                    您的瀏覽器不支援影片播放
-                  </video>` : 
-                  `<img class="card-media" src="${card.image}" alt="${card.word}">`
-                }
-                <div class="stars">${starIcons}</div>
-                <div class="label">
-                  <div class="chinese-text">${card.zh}</div>
-                  <div class="english-text">${card.word}</div>
-                </div>
-                <div class="category-tag">類別：${card.category}</div>
+      currentWishDiv.innerHTML = `
+        <div class="wish-card-outer">
+          <div class="wish-card-inner">
+            <div class="card ${rarityClass} wish-card-style" style="margin:0 auto;">
+              ${cardMedia}
+              <div class="stars">${starIcons}</div>
+              <div class="label">
+                <div class="chinese-text">${card.zh}</div>
+                <div class="english-text">${card.word}</div>
               </div>
-              <div class="wish-bonus-block">
-                <span class="wish-bonus-icon">🎯</span>
-                <span class="wish-bonus-text">SSR 抽中機率提升 <b>2%</b></span>
-              </div>
+              <div class="category-tag">類別：${card.category}</div>
             </div>
           </div>
-        `;
-      currentWishDiv.innerHTML = cardContent;
+        </div>
+      `;
     }
 
-    // 新增：獲取許願加成機率
+    // 許願加成機率（依稀有度）
     function getWishBonus(rarity) {
-      // 許願池只針對 SSR 卡片，統一使用 SSR 加成
-      return 2; // SSR 提升 2%
+      if (rarity === '超稀有') return 2; // SSR 2%
+      if (rarity === '稀有') return 4;   // R卡 4%
+      if (rarity === '普通') return 6;   // A卡 6%
+      return 0;
     }
 
-    // 新增：檢查是否抽中許願卡片
+    // 檢查是否抽中許願卡片
     function checkWishCard() {
       if (!currentWishCard) return false;
-      
       const wishBonus = getWishBonus(currentWishCard.rarity);
       const random = Math.random() * 100;
-      
       return random < wishBonus;
     }
 
@@ -1811,8 +1833,9 @@
       }
 
       // 初始化許願池選項
-      initializeWishPool();
-      updateWishDisplay();
+      // === 刪除 initializeWishPool 函數定義及所有呼叫 ===
+      // （請直接移除 function initializeWishPool(...) { ... } 及所有 initializeWishPool(...) 呼叫）
+      // ... existing code ...
 
       // 首次來到頁面就給 150 顆星（只執行一次）
       if (!localStorage.getItem("firstGachaGifted")) {
@@ -2193,7 +2216,9 @@
       console.log('- ownedCards[card.word]:', ownedCards[card.word]);
       
       // 顯示卡片狀態
-      let displayShardCount = isUnlocked ? '已解鎖' : '未解鎖';
+      let unlockIcon = isUnlocked
+        ? '<span class="unlock-status-icon">✔</span>'
+        : '<span class="unlock-status-icon">✖</span>';
 
         // 6. 根據稀有度設定不同的動畫延遲時間
         let flipDelay = 1500;
@@ -2419,10 +2444,13 @@
           div.innerHTML = `
             ${cardMedia}
             <div class="stars">${starIcons}</div>
-            <div class="label">${card.zh} (${card.word})</div>
+            <div class="label">
+              <div class="chinese-text">${card.zh}</div>
+              <div class="english-text">${card.word}</div>
+            </div>
             <div class="category-tag">類別：${card.category}</div>
             <div class="rank-badge">${rankMap[card.rarity] || ""}</div>
-            <div class="shard-count">${displayShardCount}</div>
+            ${unlockIcon}
           `;
           if (isUnlocked) {
             // 新增：如果是新卡片，給予亮光動畫
@@ -2527,7 +2555,9 @@
       console.log('- ownedCards[card.word]:', ownedCards[card.word]);
       
       // 顯示卡片狀態
-      let displayShardCount = isUnlocked ? '已解鎖' : '未解鎖';
+      let unlockIcon = isUnlocked
+        ? '<span class="unlock-status-icon">✔</span>'
+        : '<span class="unlock-status-icon">✖</span>';
 
       // 6. 根據稀有度設定不同的動畫延遲時間
       let flipDelay = 1500;
@@ -2754,10 +2784,13 @@
           div.innerHTML = `
             ${cardMedia}
             <div class="stars">${starIcons}</div>
-            <div class="label">${card.zh} (${card.word})</div>
+            <div class="label">
+              <div class="chinese-text">${card.zh}</div>
+              <div class="english-text">${card.word}</div>
+            </div>
             <div class="category-tag">類別：${card.category}</div>
             <div class="rank-badge">${rankMap[card.rarity] || ""}</div>
-            <div class="shard-count">${displayShardCount}</div>
+            ${unlockIcon}
           `;
         if (isUnlocked) {
           // 新增：如果是新卡片，給予亮光動畫
@@ -3042,6 +3075,202 @@
     setTimeout(() => {
       updateAutoSaveStatus();
     }, 2000);
+
+    // ====== 分類分頁功能 ======
+    function renderCategoryTabs() {
+      // 已移除
+    }
+    function filterCardsByCategory(category) {
+      // 已移除
+    }
+    // 頁面載入時自動渲染分頁
+    window.addEventListener('load', () => {
+      // renderCategoryTabs();
+      // filterCardsByCategory('全部');
+    });
+
+    // 新增：許願選單即時預覽功能
+    function updateWishPreview() {
+      const card = getCurrentWishCard();
+      const previewDiv = document.getElementById('wishPreview');
+      if (!previewDiv) return;
+      if (!card) {
+        previewDiv.innerHTML = '';
+        return;
+      }
+      const rarityClass = card.rarity === '普通' ? 'common' : card.rarity === '稀有' ? 'rare' : 'epic';
+      const isImageMP4 = card.image && card.image.endsWith('.mp4');
+      let cardMedia = isImageMP4
+        ? `<video class="card-media" autoplay loop muted playsinline style="width: 100%; height: 50%; object-fit: cover; border-radius: 10px;">
+            <source src="${card.image}" type="video/mp4">您的瀏覽器不支援影片播放</video>`
+        : `<img class="card-media" src="${card.image}" alt="${card.word}">`;
+      let starIcons = card.rarity === '普通' ? '★' : card.rarity === '稀有' ? '★★' : '★★★';
+      previewDiv.innerHTML = `
+        <div class="wish-card-outer">
+          <div class="wish-card-inner">
+            <div class="card ${rarityClass} wish-card-style" style="margin:0 auto;">
+              ${cardMedia}
+              <div class="stars">${starIcons}</div>
+              <div class="label">
+                <div class="chinese-text">${card.zh}</div>
+                <div class="english-text">${card.word}</div>
+              </div>
+              <div class="category-tag">類別：${card.category}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    // 綁定選單 change 事件
+    window.addEventListener('DOMContentLoaded', function() {
+      const wishSelect = document.getElementById('wishPool');
+      if (wishSelect) {
+        wishSelect.addEventListener('change', updateWishPreview);
+        setTimeout(updateWishPreview, 500); // 頁面初始時也顯示一次
+      }
+    });
+
+    // 搜尋input事件
+    window.addEventListener('DOMContentLoaded', function() {
+      const wishSearch = document.getElementById('wishSearch');
+      if (wishSearch) {
+        wishSearch.addEventListener('input', function() {
+          // === 刪除 initializeWishPool 函數定義及所有呼叫 ===
+          // （請直接移除 function initializeWishPool(...) { ... } 及所有 initializeWishPool(...) 呼叫）
+          // ... existing code ...
+        });
+      }
+    });
+
+    console.log(allCards);
+
+    // 4. 綁定事件
+    // 將以下內容搬到 window.addEventListener('load', ...)
+    window.addEventListener('load', function() {
+      const wishSearchGlobal = document.getElementById('wishSearchGlobal');
+      function refreshAllWishSelects() {
+        const val = wishSearchGlobal ? wishSearchGlobal.value : '';
+        fillWishSelect('超稀有','wishPoolSSR',val);
+        fillWishSelect('稀有','wishPoolR',val);
+        fillWishSelect('普通','wishPoolA',val);
+        updateWishPreview();
+      }
+      refreshAllWishSelects();
+      if (wishSearchGlobal) {
+        wishSearchGlobal.value = '';
+        wishSearchGlobal.addEventListener('input', refreshAllWishSelects);
+      }
+      // 選單事件
+      ['wishPoolSSR','wishPoolR','wishPoolA'].forEach(id => {
+        const sel = document.getElementById(id);
+        if (sel) {
+          sel.addEventListener('change', function() {
+            clearOtherWishSelects(id);
+            updateWishPreview();
+          });
+        }
+      });
+      updateWishPreview();
+    });
+
+    // 2. 初始化三個選單
+    function fillWishSelect(rarity, selectId, globalSearchValue) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+      select.innerHTML = '<option value="">請選擇卡片</option>';
+      if (!Array.isArray(allCards) || allCards.length === 0) return;
+      let hasOption = false;
+      let filterText = globalSearchValue ? globalSearchValue.trim().toLowerCase() : '';
+      const cards = allCards.filter(card => card.rarity === rarity);
+      cards.sort((a, b) => a.category.localeCompare(b.category));
+      cards.forEach(card => {
+        if (filterText) {
+          const text = `${card.category} ${card.zh} ${card.word}`.toLowerCase();
+          if (!text.includes(filterText)) return;
+        }
+        const option = document.createElement('option');
+        option.value = card.word;
+        option.textContent = `${getRarityEmoji(card.rarity)} [${card.category}] ${card.zh} (${card.word})`;
+        select.appendChild(option);
+        hasOption = true;
+      });
+      if (!hasOption) {
+        const noOption = document.createElement('option');
+        noOption.value = '';
+        noOption.disabled = true;
+        noOption.selected = true;
+        noOption.textContent = '沒有符合的卡片';
+        select.appendChild(noOption);
+      }
+    }
+    function clearOtherWishSelects(exceptId) {
+      ['wishPoolSSR','wishPoolR','wishPoolA'].forEach(id => {
+        if (id !== exceptId) {
+          const sel = document.getElementById(id);
+          if (sel) sel.value = '';
+        }
+      });
+    }
+    function getCurrentWishCard() {
+      const ssr = document.getElementById('wishPoolSSR').value;
+      const r = document.getElementById('wishPoolR').value;
+      const a = document.getElementById('wishPoolA').value;
+      const word = ssr || r || a;
+      if (!word) return null;
+      return allCards.find(card => card.word === word);
+    }
+    function updateWishPreview() {
+      const card = getCurrentWishCard();
+      const previewDiv = document.getElementById('wishPreview');
+      if (!previewDiv) return;
+      if (!card) {
+        previewDiv.innerHTML = '';
+        return;
+      }
+      const rarityClass = card.rarity === '普通' ? 'common' : card.rarity === '稀有' ? 'rare' : 'epic';
+      const isImageMP4 = card.image && card.image.endsWith('.mp4');
+      let cardMedia = isImageMP4
+        ? `<video class="card-media" autoplay loop muted playsinline style="width: 100%; height: 50%; object-fit: cover; border-radius: 10px;">
+            <source src="${card.image}" type="video/mp4">您的瀏覽器不支援影片播放</video>`
+        : `<img class="card-media" src="${card.image}" alt="${card.word}">`;
+      let starIcons = card.rarity === '普通' ? '★' : card.rarity === '稀有' ? '★★' : '★★★';
+      previewDiv.innerHTML = `
+        <div class="wish-card-outer">
+          <div class="wish-card-inner">
+            <div class="card ${rarityClass} wish-card-style" style="margin:0 auto;">
+              ${cardMedia}
+              <div class="stars">${starIcons}</div>
+              <div class="label">
+                <div class="chinese-text">${card.zh}</div>
+                <div class="english-text">${card.word}</div>
+              </div>
+              <div class="category-tag">類別：${card.category}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const setWishBtn = document.getElementById('setWishBtn');
+    if (setWishBtn) {
+      setWishBtn.addEventListener('click', setWishCard);
+    }
+
+    // 綁定選單
+    ['wishPoolSSR','wishPoolR','wishPoolA'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (sel) {
+        sel.addEventListener('change', function() {
+          clearOtherWishSelects(id);
+          updateWishDisplay();
+        });
+      }
+    });
+    // 綁定搜尋
+    const wishSearchGlobal = document.getElementById('wishSearchGlobal');
+    if (wishSearchGlobal) {
+      wishSearchGlobal.addEventListener('input', updateWishDisplay);
+    }
   </script>
 </body>
 </html>
