@@ -718,14 +718,9 @@
     </div>
   </div>
 
-  <audio id="backgroundMusic" loop autoplay>
-    <source src="sound/午後放鬆時光（純音樂）.mp3" type="audio/mpeg">
-  </audio>
-
   <script src="js/userData.js"></script>
   <script src="js/characterDialogue.js"></script>
   <script src="js/gameDialogue.js"></script>
-  <script src="js/sound.js"></script>
   <script>
     // ===== 遊戲配置 =====
     const GAME_CONFIG = {
@@ -1045,28 +1040,49 @@
     };
 
     // ===== 背景音樂控制 =====
+    let bgMusic = null;
+    let isMusicPlaying = false;
+
     function initBackgroundMusic() {
-      if (typeof SoundSystem !== 'undefined') {
-        SoundSystem.bgm.initGlobalAudio();
-        SoundSystem.bgm.updateAllControls();
+      bgMusic = new Audio('sound/午後放鬆時光（純音樂）.mp3');
+      bgMusic.loop = true;
+      bgMusic.volume = 0.3;
+      
+      // 從localStorage讀取音樂狀態
+      const musicState = localStorage.getItem('bgMusicState');
+      if (musicState === 'playing') {
+        playBackgroundMusic();
       }
     }
 
     function toggleBackgroundMusic() {
-      if (typeof SoundSystem !== 'undefined') {
-        SoundSystem.bgm.toggle();
+      if (isMusicPlaying) {
+        pauseBackgroundMusic();
+      } else {
+        playBackgroundMusic();
       }
     }
 
     function playBackgroundMusic() {
-      if (typeof SoundSystem !== 'undefined') {
-        SoundSystem.bgm.play();
+      if (bgMusic) {
+        bgMusic.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('bgMusicControl').textContent = '🔊';
+          document.getElementById('bgMusicControl').classList.remove('paused');
+          localStorage.setItem('bgMusicState', 'playing');
+        }).catch(err => {
+          console.log('背景音樂播放失敗:', err);
+        });
       }
     }
 
     function pauseBackgroundMusic() {
-      if (typeof SoundSystem !== 'undefined') {
-        SoundSystem.bgm.pause();
+      if (bgMusic) {
+        bgMusic.pause();
+        isMusicPlaying = false;
+        document.getElementById('bgMusicControl').textContent = '🔇';
+        document.getElementById('bgMusicControl').classList.add('paused');
+        localStorage.setItem('bgMusicState', 'paused');
       }
     }
 
